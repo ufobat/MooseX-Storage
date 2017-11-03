@@ -327,8 +327,10 @@ sub find_type_handler {
     my %seen;
     my @fallback = grep { !$seen{$_}++ } qw/Int Num Str Value/, keys %TYPES;
     foreach my $type ( @fallback ) {
-        return $TYPES{$type}
-            if $type_constraint->is_subtype_of($type);
+        if ($type_constraint->is_subtype_of($type)) {
+            $TYPES{$type_constraint->name} = $TYPES{$type};
+            return $TYPES{$type};
+        }
     }
 
     # NOTE: the reason the above will work has to do with the fact that custom
